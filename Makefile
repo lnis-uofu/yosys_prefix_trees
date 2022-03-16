@@ -5,8 +5,7 @@ BUILD_DIR := build
 SRC_DIR := src
 
 YOSYS_CONFIG := yosys-config
-CXX ?= $(shell $(YOSYS_CONFIG) --cxx)
-CFLAGS ?= -O0 -Wall
+CFLAGS ?= -O0 -Wall -lstdc++
 LDFLAGS :=  
 
 PLUGINS_DIR ?= $(shell $(YOSYS_CONFIG) --datdir)/plugins
@@ -30,11 +29,11 @@ $(BUILD_DIR)/version.o: util/makeversion.sh .git/HEAD
 	cd build; $(SHELL) ../util/makeversion.sh -o version.o
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cc
-	$(CXX) -c --cxxflags -o $@ $< $(CFLAGS)
+	$(YOSYS_CONFIG) --exec --cxx -c --cxxflags -o $@ $< $(CFLAGS)
 
 .PHONY: test
 test: $(BUILD_DIR)/version.o $(BUILD_DIR)/pptrees.o
-	$(CXX) -o test build/pptrees.o build/version.o
+	$(YOSYS_CONFIG) --exec --cxx -o test build/pptrees.o build/version.o $(CFLAGS)
 	./test --version
 
 .PHONY: clean
