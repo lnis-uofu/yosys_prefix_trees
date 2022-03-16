@@ -39,6 +39,19 @@ Next, install the pptrees library as a local Python package:
 pip3 install git+https://github.com/tdene/synth_opt_adders.git --user
 ```
 
+Install Yosys, either by building from
+[source](https://github.com/YosysHQ/yosys), or via package manager:
+
+```
+apt install yosys
+```
+
+Install `yosys-dev` via package manager:
+
+```
+apt install yosys-dev
+```
+
 Finally, build the C code-base of this repository:
 
 ```
