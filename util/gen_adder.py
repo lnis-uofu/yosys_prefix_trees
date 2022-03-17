@@ -30,7 +30,6 @@ def main():
         getattr(g,a.split("@")[0])(*[int(x) for x in a.split("@")[1].split(",")]);
 
     g.hdl(out=output_hdl,mapping=args.mapping,language=hdl_lang,top_module=args.top_module)
-    g.png('test.png')
 
 if __name__=="__main__":
     main()
