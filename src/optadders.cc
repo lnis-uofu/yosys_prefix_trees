@@ -12,6 +12,7 @@
 #include <cerrno>
 #include <sstream>
 #include <climits>
+#include <Python.h>
 
 USING_YOSYS_NAMESPACE
 
@@ -87,9 +88,13 @@ void python_caller(RTLIL::Design *design, int width, std::string start, std::str
 	tempdir_name = make_temp_dir(tempdir_name);   
     python_output_filter filt(tempdir_name, false);
 
-    std::string py_command = "TODO: fill in the command";
-	int ret = run_command(py_command, std::bind(&python_output_filter::next_line, filt, std::placeholders::_1));
+	Py_Initialize();
+	FILE* PScriptFile = fopen("/Users/srt/code/yosys_prefix_trees/util/gen_adder.py", "r");
 
+
+    /*std::string py_command = "TODO: fill in the command";
+	int ret = run_command(py_command, std::bind(&python_output_filter::next_line, filt, std::placeholders::_1));
+	*/
 	if (ret != 0)
 		log_error("Synth_opt_adder: execution of command \"%s\" failed: return code %d.\n", py_command.c_str(), ret);
 }
