@@ -12,7 +12,7 @@
 #include <cerrno>
 #include <sstream>
 #include <climits>
-#include <Python.h>
+#include <Python/Python.h>
 
 USING_YOSYS_NAMESPACE
 
@@ -87,16 +87,27 @@ void python_caller(RTLIL::Design *design, int width, std::string start, std::str
     std::string tempdir_name = "/tmp/synth-adder-XXXXXX";
 	tempdir_name = make_temp_dir(tempdir_name);   
     python_output_filter filt(tempdir_name, false);
-
+	char pwd [PATH_MAX];
+	if (!getcwd(pwd, sizeof(pwd))) {
+		log_cmd_error("getcwd failed: %s\n", strerror(errno));
+		log_abort();
+	}
+	std::string script_path = std::string(pwd)+ "/../util/gen_adder.py";
 	Py_Initialize();
-	FILE* PScriptFile = fopen("/Users/srt/code/yosys_prefix_trees/util/gen_adder.py", "r");
+	FILE* gen_adder_script = fopen(script_path.c_str(), "r"); //still figuring out if this is how I want to do this
+	
+	if (gen_adder_script){
+		PyRun_SimpleFile(gen_adder_script, "gen_adder.py");
+		fclose(gen_adder_script);
+	}
 
+	Py_Finalize();
 
-    /*std::string py_command = "TODO: fill in the command";
+    /*std::string py_command = "PLACEHOLDER";
 	int ret = run_command(py_command, std::bind(&python_output_filter::next_line, filt, std::placeholders::_1));
-	*/
 	if (ret != 0)
 		log_error("Synth_opt_adder: execution of command \"%s\" failed: return code %d.\n", py_command.c_str(), ret);
+	*/
 }
 
 struct OptAdders : public Pass {

@@ -5,7 +5,7 @@ BUILD_DIR := build
 SRC_DIR := src
 
 YOSYS_CONFIG := yosys-config
-CFLAGS ?= -O0 -Wall -lstdc++
+CFLAGS ?= -O0 -Wall -lstdc++ -framework python
 LDFLAGS :=  
 
 PLUGINS_DIR ?= $(shell $(YOSYS_CONFIG) --datdir)/plugins
