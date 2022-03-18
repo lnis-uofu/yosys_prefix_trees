@@ -85,7 +85,10 @@ struct python_output_filter
 
 void python_caller(RTLIL::Design *design, int width, std::string start, std::string transform, std::string mapping, std::string hdl_root){
     std::string tempdir_name = "/tmp/synth-adder-XXXXXX";
-	tempdir_name = make_temp_dir(tempdir_name);   
+	tempdir_name = make_temp_dir(tempdir_name);
+	//right now the python uses module_name.v; I need to either change that or add support for different names
+	std::string output_temp_file = tempdir_name + "/adder_out.v";
+
     python_output_filter filt(tempdir_name, false);
 	char pwd [PATH_MAX];
 	if (!getcwd(pwd, sizeof(pwd))) {
@@ -103,11 +106,11 @@ void python_caller(RTLIL::Design *design, int width, std::string start, std::str
 
 	Py_Finalize();
 
-    /*std::string py_command = "PLACEHOLDER";
-	int ret = run_command(py_command, std::bind(&python_output_filter::next_line, filt, std::placeholders::_1));
-	if (ret != 0)
-		log_error("Synth_opt_adder: execution of command \"%s\" failed: return code %d.\n", py_command.c_str(), ret);
-	*/
+	bool builtin_lib = liberty_file.empty();
+	RTLIL::Design *mapped_design = new RTLIL::Design;
+	//need to find verilog equivalent to this line
+	//parse_blif(mapped_design, ifs_lso, builtin_lib ? "\\DFF" : "\\_dff_", false, sop_mode);
+
 }
 
 struct OptAdders : public Pass {
