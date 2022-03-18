@@ -14,7 +14,7 @@ PLUGINS_DIR ?= $(shell $(YOSYS_CONFIG) --datdir)/plugins
 default: build
 
 .PHONY: build
-build: $(BUILD_DIR)/version.o $(BUILD_DIR)/pptrees.so
+build: $(BUILD_DIR)/version.o $(BUILD_DIR)/pptrees.so $(BUILD_DIR)/optadders.so 
 
 .PHONY: install
 install: build
