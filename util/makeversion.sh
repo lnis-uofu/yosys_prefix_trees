@@ -26,13 +26,13 @@
 # @author Wolfram Rösler <wolfram@roesler-ac.de>
 # @date 2017-02-12
 
-CXX=$(yosys-config --cxx)
+CXX=$($YOSYS_CONFIG --cxx -c --cxxflags)
 
 # Check command line
 if [ $# = 2 -a "$1" = "-o" ];then
 
     # Called with -o: Create a .o file with the version number
-    bash $0 | $CXX -x c++ -c - -o "$2"
+    bash $0 | $CXX -x c++ - -o "$2"
     exit
 
 elif [ $# != 0 ];then

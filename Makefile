@@ -4,9 +4,10 @@ SHELL := bash
 BUILD_DIR := build
 SRC_DIR := src
 
-YOSYS_CONFIG := yosys-config
-CFLAGS ?= -O0 -Wall -lstdc++ -framework python
-LDFLAGS :=  
+YOSYS_PATH := $(realpath $(HOME)/data/yosys)
+export YOSYS_CONFIG := $(YOSYS_PATH)/yosys-config
+CFLAGS ?= -O0 -Wall -lstdc++ -I$(YOSYS_PATH)
+LDFLAGS ?= -Wl,-rpath,$(YOSYS_PATH)
 
 PLUGINS_DIR ?= $(shell $(YOSYS_CONFIG) --datdir)/plugins
 
@@ -14,11 +15,12 @@ PLUGINS_DIR ?= $(shell $(YOSYS_CONFIG) --datdir)/plugins
 default: build
 
 .PHONY: build
-build: $(BUILD_DIR)/version.o $(BUILD_DIR)/pptrees.so $(BUILD_DIR)/optadders.so 
+build: $(BUILD_DIR)/version.o $(BUILD_DIR)/pptrees.so 
 
 .PHONY: install
 install: build
-	install -D $(BUILD_DIR)/pptrees.so $(PLUGINS_DIR)
+	sudo mkdir -p $(PLUGINS_DIR)
+	sudo install -D $(BUILD_DIR)/pptrees.so $(PLUGINS_DIR)
 
 $(BUILD_DIR)/%.so: $(BUILD_DIR)/%.o
 	$(YOSYS_CONFIG) --build $@ $< -shared $(LDFLAGS)
