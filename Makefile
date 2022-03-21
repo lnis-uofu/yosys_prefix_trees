@@ -17,11 +17,6 @@ default: build
 .PHONY: build
 build: $(BUILD_DIR)/version.o $(BUILD_DIR)/pptrees.so 
 
-.PHONY: install
-install: build
-	sudo mkdir -p $(PLUGINS_DIR)
-	sudo install -D $(BUILD_DIR)/pptrees.so $(PLUGINS_DIR)
-
 $(BUILD_DIR)/%.so: $(BUILD_DIR)/%.o
 	$(YOSYS_CONFIG) --build $@ $< -shared $(LDFLAGS)
 
