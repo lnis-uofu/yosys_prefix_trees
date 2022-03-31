@@ -264,12 +264,10 @@ struct opt_pptrees : public Pass {
 				// Call the python script
 				std::string pptrees_dir = python_tree(width, start, transforms, mapping);
 
-				// Get the output of the python script
-				Pass::call(design, stringf("read_verilog -sv %s/pptrees_alu.v",pptrees_dir.c_str()));
-
 				// Select and techmap this $alu cell
 				Pass::call(design, stringf("select a:src=%s",cell->get_src_attribute().c_str()));
-				Pass::call(design, "techmap -map pptrees_alu.v %");
+				Pass::call(design, stringf("techmap -map %s/pptrees_alu.v %%", pptrees_dir.c_str()));
+				Pass::call(design, "select *");
 
 			}
                 }
