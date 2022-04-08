@@ -12,7 +12,6 @@
 #include <cerrno>
 #include <sstream>
 #include <climits>
-//#include <Python.h>
 
 USING_YOSYS_NAMESPACE
 
@@ -210,9 +209,11 @@ struct opt_pptrees : public Pass {
         size_t argidx;
         for (argidx = 1; argidx < args.size(); argidx++) {
             std::string arg = args[argidx];
-		if (arg == "-mapping" && argidx+1 < args.size()) {
-			mapping = args[++argidx]; //super fragile; do this better
-		}
+			if (arg == "-mapping" && argidx+1 < args.size()) {
+				mapping = args[++argidx];
+				continue;
+			}
+			break;
         }
         
         extra_args(args, argidx, design);
