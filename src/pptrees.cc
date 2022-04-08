@@ -223,12 +223,11 @@ struct opt_pptrees : public Pass {
 	// Save attributes of $add cells before they are removed by alumacc
 	dict<std::string, dict<RTLIL::IdString, RTLIL::Const>> saved_attributes = save_attributes(design);
 
-	// Run alumacc pass
-	Pass::call(design, "alumacc");
-
 	// Iterate through all selected modules
 	for (RTLIL::Module *mod : design->selected_modules())
 	{
+		// Run alumacc pass
+		Pass::call_on_module(design, mod, "alumacc");
 		// Skip modules that contain processes
 		if (mod->has_processes_warn() ) {
 			log("Skipping module %s as it contains processes.\n", log_id(mod));
