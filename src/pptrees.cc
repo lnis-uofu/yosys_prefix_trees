@@ -188,6 +188,7 @@ struct opt_pptrees : public Pass {
 		log("\n");
 		log("	-mapping <string>\n");
 		log("		mapping strategy (default: behavioral).\n");
+		log("		valid options: behavioral, GTECH, sky130_fd_sc_hd, sky130_fd_sc_hs\n");
 		log("\n");
 
 	}
