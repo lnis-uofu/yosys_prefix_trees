@@ -184,7 +184,10 @@ struct opt_pptrees : public Pass {
 		log("\n");
 		log("	opt_pptrees [options] [selection]\n");
 		log("\n");
-		log("This pass uses the synth_opt_adders tool to optimize adders\n");
+		log("This pass uses the synth_opt_adders tool to optimize adders according to transforms specified by verilog attributes\n");
+		log("	e.g. assign test = a + (* pptrees_alu, pptrees_base=\"brent-kung\" *) b;\n");
+		log("default base = ripple-carry, default transforms = none\n");
+		log("please see plugin demo directory for examples\n");
 		log("\n");
 		log("	-mapping <string>\n");
 		log("		mapping strategy (default: behavioral).\n");
