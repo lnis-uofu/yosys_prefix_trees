@@ -269,9 +269,9 @@ struct opt_pptrees : public Pass {
 				std::string pptrees_dir = python_tree(width, start, transforms, mapping);
 
 				// Select and techmap this $alu cell
-				Pass::call(design, stringf("select a:src=%s",cell->get_src_attribute().c_str()));
-				Pass::call(design, stringf("techmap -map %s/pptrees_alu.v %%", pptrees_dir.c_str()));
-				Pass::call(design, "select *");
+				RTLIL::Selection s(false);
+				s.select(mod, cell);
+				Pass::call_on_selection(design, s, stringf("techmap -map %s/pptrees_alu.v %%", pptrees_dir.c_str()));
 
 			}
                 }
