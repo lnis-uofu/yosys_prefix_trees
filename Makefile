@@ -4,8 +4,12 @@ SHELL := bash
 BUILD_DIR := build
 SRC_DIR := src
 
-YOSYS_PATH := $(realpath $(HOME)/data/yosys)
-export YOSYS_CONFIG := $(YOSYS_PATH)/yosys-config
+# Set Yosys path to path of yosys executable if it exists
+# Otherwise it must be set by the user
+YOSYS_PATH ?= $(realpath $(dir $(shell which yosys))/..)
+
+YOSYS_CONFIG ?= $(YOSYS_PATH)/bin/yosys-config
+
 CFLAGS ?= -O0 -Wall -lstdc++ -I$(YOSYS_PATH)
 LDFLAGS ?= -Wl,-rpath,$(YOSYS_PATH)
 
@@ -27,11 +31,6 @@ $(BUILD_DIR)/version.o: util/makeversion.sh .git/HEAD
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cc
 	$(YOSYS_CONFIG) --exec --cxx -c --cxxflags -o $@ $< $(CFLAGS)
-
-.PHONY: test
-test: $(BUILD_DIR)/version.o $(BUILD_DIR)/pptrees.o
-	$(YOSYS_CONFIG) --exec --cxx -o test build/pptrees.o build/version.o $(CFLAGS)
-	./test --version
 
 .PHONY: clean
 clean:
