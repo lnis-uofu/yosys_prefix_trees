@@ -12,7 +12,6 @@
 #include <cerrno>
 #include <sstream>
 #include <climits>
-//#include <Python.h>
 
 USING_YOSYS_NAMESPACE
 
@@ -184,10 +183,14 @@ struct opt_pptrees : public Pass {
 		log("\n");
 		log("	opt_pptrees [options] [selection]\n");
 		log("\n");
-		log("This pass uses the synth_opt_adders tool to optimize adders\n");
+		log("This pass uses the synth_opt_adders tool to optimize adders according to transforms specified by verilog attributes\n");
+		log("	e.g. assign test = a + (* pptrees_alu, pptrees_base=\"brent-kung\" *) b;\n");
+		log("default base = ripple-carry, default transforms = none\n");
+		log("please see plugin demo directory for examples\n");
 		log("\n");
 		log("	-mapping <string>\n");
 		log("		mapping strategy (default: behavioral).\n");
+		log("		valid options: behavioral, GTECH, sky130_fd_sc_hd, sky130_fd_sc_hs\n");
 		log("\n");
 
 	}
@@ -206,9 +209,11 @@ struct opt_pptrees : public Pass {
         size_t argidx;
         for (argidx = 1; argidx < args.size(); argidx++) {
             std::string arg = args[argidx];
-		if (arg == "-mapping" && argidx+1 < args.size()) {
-			mapping = args[++argidx]; //super fragile; do this better
-		}
+			if (arg == "-mapping" && argidx+1 < args.size()) {
+				mapping = args[++argidx];
+				continue;
+			}
+			break;
         }
         
         extra_args(args, argidx, design);
@@ -223,12 +228,11 @@ struct opt_pptrees : public Pass {
 	// Save attributes of $add cells before they are removed by alumacc
 	dict<std::string, dict<RTLIL::IdString, RTLIL::Const>> saved_attributes = save_attributes(design);
 
-	// Run alumacc pass
-	Pass::call(design, "alumacc");
-
 	// Iterate through all selected modules
 	for (RTLIL::Module *mod : design->selected_modules())
 	{
+		// Run alumacc pass
+		Pass::call_on_module(design, mod, "alumacc");
 		// Skip modules that contain processes
 		if (mod->has_processes_warn() ) {
 			log("Skipping module %s as it contains processes.\n", log_id(mod));
@@ -265,9 +269,9 @@ struct opt_pptrees : public Pass {
 				std::string pptrees_dir = python_tree(width, start, transforms, mapping);
 
 				// Select and techmap this $alu cell
-				Pass::call(design, stringf("select a:src=%s",cell->get_src_attribute().c_str()));
-				Pass::call(design, stringf("techmap -map %s/pptrees_alu.v %%", pptrees_dir.c_str()));
-				Pass::call(design, "select *");
+				RTLIL::Selection s(false);
+				s.select(mod, cell);
+				Pass::call_on_selection(design, s, stringf("techmap -map %s/pptrees_alu.v %%", pptrees_dir.c_str()));
 
 			}
                 }
