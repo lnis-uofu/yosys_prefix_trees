@@ -110,27 +110,6 @@ std::string python_maps(std::string mapping){
 	// Create temporary directory for the mapping files
 	std::string tempdir_name = "/tmp/yosys-python-XXXXXX";
 	tempdir_name = make_temp_dir(tempdir_name);
-	python_output_filter filt(tempdir_name, false);
-	
-	// Define python executable
-	std::string python_executable = "python3";
-	
-	// Define mapping output script locally, to avoid dealing with an extra file
-	// Import modules
-	std::string py_command = "import sys; from pptrees.yosys_alu import yosys_alu as tree; ";
-	// Initialize a default tree
-	py_command.append(stringf("g=tree(1); "));
-	// Write out mappings
-	py_command.append(stringf("g.yosys_map('%s','%s');", tempdir_name.c_str(), mapping.c_str()));
-	
-	// Call python
-	std::string shell_command = stringf("%s -c \"%s\"", python_executable.c_str(), py_command.c_str());
-
-	log("Running python script from shell: %s\n", shell_command.c_str());
-	int ret = run_command(shell_command, std::bind(&python_output_filter::next_line, filt, std::placeholders::_1));
-
-	if (ret != 0)
-		log_error("Synth_opt_adder: execution of command \"%s\" failed: return code %d.\n", py_command.c_str(), ret);
 
 	return tempdir_name;
 }

@@ -13,9 +13,6 @@ YOSYS_CONFIG ?= $(YOSYS_PATH)/bin/yosys-config
 ifeq (,$(wildcard $(YOSYS_CONFIG)))
 	YOSYS_CONFIG = $(YOSYS_PATH)/yosys-config
 endif
-ifeq (,$(wildcard $(YOSYS_CONFIG)))
-	$(error "Didn't find 'yosys-config' under '$(YOSYS_PATH)'")
-endif
 
 CFLAGS ?= -O0 -Wall -lstdc++ -I$(YOSYS_PATH)
 LDFLAGS ?= -Wl,-rpath,$(YOSYS_PATH)
